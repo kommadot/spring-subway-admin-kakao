@@ -12,6 +12,7 @@ import subway.dto.SectionRequest;
 import subway.factory.LineFactory;
 import subway.factory.SectionFactory;
 import subway.service.LineService;
+import subway.service.StationService;
 
 import java.net.URI;
 import java.util.List;
@@ -21,14 +22,18 @@ import java.util.List;
 public class LineController {
 
     private final LineService lineService;
+    private final StationService stationService;
 
-    public LineController(LineService lineService) {
+    public LineController(LineService lineService, StationService stationService) {
         this.lineService = lineService;
+        this.stationService = stationService;
     }
 
     @PostMapping
     public ResponseEntity<LineResponse> createLine(@RequestBody LineRequest lineRequest) {
-        Section section = new Section(new Station(lineRequest.getUpStationId()), new Station(lineRequest.getDownStationId()), lineRequest.getDistance());
+        Section section = new Section(stationService.findOne(lineRequest.getUpStationId()),
+                stationService.findOne(lineRequest.getDownStationId()),
+                lineRequest.getDistance());
         LineResponse lineResponse = LineConvertor.convertLine(lineService.save(LineFactory.getLine(lineRequest), section));
         return ResponseEntity.created(URI.create("/lines/" + lineResponse.getId())).body(lineResponse);
     }
@@ -63,7 +68,7 @@ public class LineController {
 
     @DeleteMapping("/{lineId}/sections")
     public ResponseEntity deleteSection(@PathVariable Long lineId, @RequestParam Long stationId) {
-        lineService.deleteSection(lineId, stationId);
+        lineService.deleteSection(lineId, stationService.findOne(stationId));
         return ResponseEntity.ok().build();
     }
 }

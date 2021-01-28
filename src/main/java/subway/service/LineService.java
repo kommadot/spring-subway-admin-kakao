@@ -2,6 +2,7 @@ package subway.service;
 
 import subway.domain.Line;
 import subway.domain.Sections;
+import subway.domain.Station;
 import subway.dto.LineRequest;
 import subway.dto.LineResponse;
 import subway.domain.Section;
@@ -20,7 +21,7 @@ public interface LineService {
 
     void update(Line line);
 
-    void deleteSection(Long lineId, Long stationId);
+    void deleteSection(Long lineId, Station station);
 
     void saveSection(Section section);
 

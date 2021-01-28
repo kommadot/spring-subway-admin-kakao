@@ -65,9 +65,9 @@ public class LineServiceImpl implements LineService {
 
     @Override
     @Transactional
-    public void deleteSection(Long lineId, Long stationId) {
+    public void deleteSection(Long lineId, Station station) {
         Line line = lineDao.findOne(lineId);
-        line.deleteSection(new Station(stationId));
+        line.deleteSection(station);
         sectionDao.deleteSectionByLineId(line.getId());
         sectionDao.saveSections(line.getSections());
     }
